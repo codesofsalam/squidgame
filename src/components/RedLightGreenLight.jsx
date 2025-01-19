@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { useState, useEffect, useRef } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-const  RedLightGreenLight = () => {
-  const [gameState, setGameState] = useState('waiting');
+const RedLightGreenLight = () => {
+  const [gameState, setGameState] = useState("waiting");
   const [isGreenLight, setIsGreenLight] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [eliminatedCount, setEliminatedCount] = useState(0);
@@ -18,19 +18,20 @@ const  RedLightGreenLight = () => {
   const createCharacterModel = (color, position) => {
     const group = new THREE.Group();
 
-    // Body
     const bodyGeometry = new THREE.CapsuleGeometry(0.3, 0.9, 4, 8);
-    const bodyMaterial = new THREE.MeshStandardMaterial({ color, roughness: 0.7 });
+    const bodyMaterial = new THREE.MeshStandardMaterial({
+      color,
+      roughness: 0.7,
+    });
     const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
     body.position.y = 0.9;
     body.castShadow = true;
     group.add(body);
 
-    // Head
     const headGeometry = new THREE.SphereGeometry(0.25, 16, 16);
-    const headMaterial = new THREE.MeshStandardMaterial({ 
+    const headMaterial = new THREE.MeshStandardMaterial({
       color: 0xffdbac,
-      roughness: 0.5 
+      roughness: 0.5,
     });
     const head = new THREE.Mesh(headGeometry, headMaterial);
     head.position.y = 1.8;
@@ -39,9 +40,9 @@ const  RedLightGreenLight = () => {
 
     // Backpack
     const backpackGeometry = new THREE.BoxGeometry(0.4, 0.5, 0.2);
-    const backpackMaterial = new THREE.MeshStandardMaterial({ 
+    const backpackMaterial = new THREE.MeshStandardMaterial({
       color: color,
-      roughness: 0.8 
+      roughness: 0.8,
     });
     const backpack = new THREE.Mesh(backpackGeometry, backpackMaterial);
     backpack.position.set(0, 1, 0.25);
@@ -54,13 +55,13 @@ const  RedLightGreenLight = () => {
 
   // Initialize audio
   useEffect(() => {
-    const audio = new Audio('/api/placeholder/audio');  // Replace with actual game music URL
+    const audio = new Audio("/api/placeholder/audio"); // Replace with actual game music URL
     audio.loop = true;
     audioRef.current = audio;
 
     return () => {
       audio.pause();
-      audio.src = '';
+      audio.src = "";
     };
   }, []);
 
@@ -111,8 +112,8 @@ const  RedLightGreenLight = () => {
 
     // Create multiple characters
     const characterColors = [
-      0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 
-      0xFF00FF, 0x00FFFF, 0xFFA500, 0x800080
+      0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff, 0xffa500,
+      0x800080,
     ];
 
     for (let i = 0; i < 8; i++) {
@@ -124,27 +125,27 @@ const  RedLightGreenLight = () => {
       charactersRef.current.push({
         mesh: character,
         initialX: x,
-        eliminated: false
+        eliminated: false,
       });
     }
 
     // Create doll
     const dollGroup = new THREE.Group();
-    
+
     // Doll body
     const bodyGeometry = new THREE.CylinderGeometry(1, 1.5, 4, 32);
-    const bodyMaterial = new THREE.MeshStandardMaterial({ 
-      color: 0xFFA726,
-      roughness: 0.3
+    const bodyMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffa726,
+      roughness: 0.3,
     });
     const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
     dollGroup.add(body);
 
     // Doll dress
     const dressGeometry = new THREE.CylinderGeometry(2, 3, 3, 32);
-    const dressMaterial = new THREE.MeshStandardMaterial({ 
-      color: 0xFDD835,
-      roughness: 0.4
+    const dressMaterial = new THREE.MeshStandardMaterial({
+      color: 0xfdd835,
+      roughness: 0.4,
     });
     const dress = new THREE.Mesh(dressGeometry, dressMaterial);
     dress.position.y = -0.5;
@@ -152,9 +153,9 @@ const  RedLightGreenLight = () => {
 
     // Doll head
     const headGeometry = new THREE.SphereGeometry(1, 32, 32);
-    const headMaterial = new THREE.MeshStandardMaterial({ 
-      color: 0xFFE0B2,
-      roughness: 0.2
+    const headMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffe0b2,
+      roughness: 0.2,
     });
     const head = new THREE.Mesh(headGeometry, headMaterial);
     head.position.y = 2.5;
@@ -162,9 +163,9 @@ const  RedLightGreenLight = () => {
 
     // Doll eyes
     const eyeGeometry = new THREE.SphereGeometry(0.2, 16, 16);
-    const eyeMaterial = new THREE.MeshStandardMaterial({ 
+    const eyeMaterial = new THREE.MeshStandardMaterial({
       color: 0x000000,
-      roughness: 0.1
+      roughness: 0.1,
     });
     const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
     leftEye.position.set(-0.3, 2.7, 0.7);
@@ -200,13 +201,13 @@ const  RedLightGreenLight = () => {
   }, []);
 
   useEffect(() => {
-    if (gameState === 'playing') {
+    if (gameState === "playing") {
       audioRef.current?.play();
-      
+
       const timer = setInterval(() => {
-        setTimeLeft(prev => {
+        setTimeLeft((prev) => {
           if (prev <= 0) {
-            setGameState('lost');
+            setGameState("lost");
             return 0;
           }
           return prev - 1;
@@ -216,7 +217,7 @@ const  RedLightGreenLight = () => {
       const gameLoop = setInterval(() => {
         const shouldChange = Math.random() > 0.7;
         if (shouldChange) {
-          setIsGreenLight(prev => {
+          setIsGreenLight((prev) => {
             const newState = !prev;
             if (!newState) {
               audioRef.current?.pause();
@@ -240,13 +241,13 @@ const  RedLightGreenLight = () => {
   }, [gameState]);
 
   const handleMovement = (e) => {
-    if (gameState !== 'playing') return;
+    if (gameState !== "playing") return;
 
     const moveSpeed = 0.5;
     let moved = false;
 
-    if (e.key === 'ArrowUp' || e.key === 'w') {
-      charactersRef.current.forEach(char => {
+    if (e.key === "ArrowUp" || e.key === "w") {
+      charactersRef.current.forEach((char) => {
         if (!char.eliminated) {
           char.mesh.position.z -= moveSpeed;
           moved = true;
@@ -254,16 +255,19 @@ const  RedLightGreenLight = () => {
       });
     }
 
-    if (e.key === 'ArrowLeft' || e.key === 'a') {
-      charactersRef.current.forEach(char => {
+    if (e.key === "ArrowLeft" || e.key === "a") {
+      charactersRef.current.forEach((char) => {
         if (!char.eliminated) {
-          char.mesh.position.x = Math.max(-18, char.mesh.position.x - moveSpeed);
+          char.mesh.position.x = Math.max(
+            -18,
+            char.mesh.position.x - moveSpeed
+          );
         }
       });
     }
 
-    if (e.key === 'ArrowRight' || e.key === 'd') {
-      charactersRef.current.forEach(char => {
+    if (e.key === "ArrowRight" || e.key === "d") {
+      charactersRef.current.forEach((char) => {
         if (!char.eliminated) {
           char.mesh.position.x = Math.min(18, char.mesh.position.x + moveSpeed);
         }
@@ -271,29 +275,29 @@ const  RedLightGreenLight = () => {
     }
 
     if (moved && !isGreenLight) {
-      charactersRef.current.forEach(char => {
+      charactersRef.current.forEach((char) => {
         if (!char.eliminated) {
           char.eliminated = true;
           char.mesh.rotation.x = Math.PI / 2;
-          setEliminatedCount(prev => prev + 1);
+          setEliminatedCount((prev) => prev + 1);
         }
       });
-      setGameState('lost');
+      setGameState("lost");
     }
 
     // Check if any surviving character reached the end
     const survivingCharacter = charactersRef.current.find(
-      char => !char.eliminated && char.mesh.position.z <= -35
+      (char) => !char.eliminated && char.mesh.position.z <= -35
     );
-    
+
     if (survivingCharacter) {
-      setGameState('won');
+      setGameState("won");
     }
   };
 
   useEffect(() => {
-    window.addEventListener('keydown', handleMovement);
-    return () => window.removeEventListener('keydown', handleMovement);
+    window.addEventListener("keydown", handleMovement);
+    return () => window.removeEventListener("keydown", handleMovement);
   }, [gameState, isGreenLight]);
 
   const toggleMute = () => {
@@ -304,13 +308,13 @@ const  RedLightGreenLight = () => {
   };
 
   const startGame = () => {
-    setGameState('playing');
+    setGameState("playing");
     setIsGreenLight(true);
     setTimeLeft(60);
     setEliminatedCount(0);
-    
+
     // Reset all characters
-    charactersRef.current.forEach(char => {
+    charactersRef.current.forEach((char) => {
       char.eliminated = false;
       char.mesh.position.set(char.initialX, 0, 20);
       char.mesh.rotation.x = 0;
@@ -326,15 +330,15 @@ const  RedLightGreenLight = () => {
       <div className="mb-4 text-white text-center">
         <div className="flex items-center justify-between w-full mb-4">
           <h1 className="text-4xl font-bold">Red Light, Green Light</h1>
-          <button 
+          <button
             onClick={toggleMute}
             className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
           >
-            {isMuted ? '🔇' : '🔊'}
+            {isMuted ? "🔇" : "🔊"}
           </button>
         </div>
         <div className="mb-2">
-          {gameState === 'waiting' && (
+          {gameState === "waiting" && (
             <button
               className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
               onClick={startGame}
@@ -342,24 +346,36 @@ const  RedLightGreenLight = () => {
               Start Game
             </button>
           )}
-          {gameState === 'playing' && (
+          {gameState === "playing" && (
             <div className="space-y-2">
               <div className="text-2xl">
-                {isGreenLight ? '🟢 Green Light!' : '🔴 Red Light!'}
+                {isGreenLight ? "🟢 Green Light!" : "🔴 Red Light!"}
               </div>
               <div className="text-xl">
                 Time Left: {timeLeft}s | Eliminated: {eliminatedCount}
               </div>
             </div>
           )}
-          {gameState === 'won' && (
+          {gameState === "won" && (
             <div className="text-2xl text-green-500">
-              You Won! <button onClick={startGame} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded ml-2">Play Again</button>
+              You Won!{" "}
+              <button
+                onClick={startGame}
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded ml-2"
+              >
+                Play Again
+              </button>
             </div>
           )}
-          {gameState === 'lost' && (
+          {gameState === "lost" && (
             <div className="text-2xl text-red-500">
-              Eliminated! <button onClick={startGame} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2">Try Again</button>
+              Eliminated!{" "}
+              <button
+                onClick={startGame}
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2"
+              >
+                Try Again
+              </button>
             </div>
           )}
         </div>
