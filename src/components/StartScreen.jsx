@@ -7,10 +7,10 @@ const StartScreen = ({ onStart, isVisible }) => {
         isVisible ? 'translate-y-0' : 'translate-y-full'
       }`}
       style={{
-        backgroundImage: 'url("/wallpaper.jpg")',
-        backgroundSize: 'cover', // Ensures the image covers the entire container
-        backgroundPosition: 'center', // Centers the image
-        backgroundRepeat: 'no-repeat', // Prevents tiling of the image
+        backgroundImage: 'url("/logo.gif")', // Use the GIF file here
+        backgroundSize: 'cover', // Ensures the GIF covers the entire container
+        backgroundPosition: 'center', // Centers the GIF
+        backgroundRepeat: 'no-repeat', // Prevents tiling of the GIF
         height: '100vh', // Full viewport height
         width: '100vw', // Full viewport width
       }}
