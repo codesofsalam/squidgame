@@ -24,7 +24,7 @@ const StartScreen = ({ onStart, isVisible }) => {
           src="/start.jpg"
           alt="Start Game"
           onClick={onStart}
-          className="w-96 mt-72commit h-auto mx-auto cursor-pointer transition-transform hover:scale-105"
+          className="w-96 mt-72 commit h-auto mx-auto cursor-pointer transition-transform hover:scale-105"
         />
         <p className="text-white text-xl mt-4">Click Above to Start</p>
       </div>
