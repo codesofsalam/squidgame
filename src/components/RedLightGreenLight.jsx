@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { Volume, Volume2} from "lucide-react";
 
 const RedLightGreenLight = () => {
   const [gameState, setGameState] = useState("waiting");
@@ -14,50 +15,141 @@ const RedLightGreenLight = () => {
   const dollRef = useRef(null);
   const frameRef = useRef(null);
   const audioRef = useRef(null);
+  const controlsRef = useRef(null);
 
-  const createCharacterModel = (color, position) => {
+  const createPlayerModel = (color, position) => {
     const group = new THREE.Group();
 
-    const bodyGeometry = new THREE.CapsuleGeometry(0.3, 0.9, 4, 8);
-    const bodyMaterial = new THREE.MeshStandardMaterial({
-      color,
-      roughness: 0.7,
+    // Enhanced body with better proportions
+    const bodyGeometry = new THREE.CapsuleGeometry(0.25, 0.8, 8, 16);
+    const bodyMaterial = new THREE.MeshPhongMaterial({
+      color: color,
+      shininess: 30,
     });
     const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
     body.position.y = 0.9;
     body.castShadow = true;
     group.add(body);
 
-    const headGeometry = new THREE.SphereGeometry(0.25, 16, 16);
-    const headMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffdbac,
-      roughness: 0.5,
+    // More detailed jumpsuit
+    const jumpsuitGeometry = new THREE.CapsuleGeometry(0.3, 0.9, 8, 16);
+    const jumpsuitMaterial = new THREE.MeshPhongMaterial({
+      color: 0x2E8B57,
+      shininess: 20,
+    });
+    const jumpsuit = new THREE.Mesh(jumpsuitGeometry, jumpsuitMaterial);
+    jumpsuit.position.y = 0.9;
+    jumpsuit.scale.set(1.1, 1, 1.1);
+    jumpsuit.castShadow = true;
+    group.add(jumpsuit);
+
+    // Detailed head with mask
+    const headGeometry = new THREE.SphereGeometry(0.22, 32, 32);
+    const headMaterial = new THREE.MeshPhongMaterial({
+      color: 0xFFDBAC,
+      shininess: 40,
     });
     const head = new THREE.Mesh(headGeometry, headMaterial);
     head.position.y = 1.8;
     head.castShadow = true;
     group.add(head);
 
-    // Backpack
-    const backpackGeometry = new THREE.BoxGeometry(0.4, 0.5, 0.2);
-    const backpackMaterial = new THREE.MeshStandardMaterial({
-      color: color,
-      roughness: 0.8,
+    // Mask
+    const maskGeometry = new THREE.BoxGeometry(0.25, 0.25, 0.1);
+    const maskMaterial = new THREE.MeshPhongMaterial({
+      color: 0x111111,
+      shininess: 50,
     });
-    const backpack = new THREE.Mesh(backpackGeometry, backpackMaterial);
-    backpack.position.set(0, 1, 0.25);
-    backpack.castShadow = true;
-    group.add(backpack);
+    const mask = new THREE.Mesh(maskGeometry, maskMaterial);
+    mask.position.set(0, 1.8, 0.15);
+    mask.castShadow = true;
+    group.add(mask);
+
+    // Number on back
+    const numberGeometry = new THREE.PlaneGeometry(0.3, 0.3);
+    const numberMaterial = new THREE.MeshPhongMaterial({
+      color: 0xFFFFFF,
+      shininess: 30,
+    });
+    const number = new THREE.Mesh(numberGeometry, numberMaterial);
+    number.position.set(0, 1.2, -0.32);
+    number.rotation.x = Math.PI;
+    group.add(number);
 
     group.position.copy(position);
     return group;
   };
 
-  // Initialize audio
-  useEffect(() => {
-    const audio = new Audio("/api/placeholder/audio"); // Replace with actual game music URL
+  const createGiantDoll = () => {
+    const group = new THREE.Group();
+
+    // Doll body with Korean school uniform style
+    const bodyGeometry = new THREE.CylinderGeometry(1.2, 1.8, 5, 32);
+    const bodyMaterial = new THREE.MeshPhongMaterial({
+      color: 0xFFA726,
+      shininess: 30,
+    });
+    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+    group.add(body);
+
+    // Orange dress
+    const dressGeometry = new THREE.CylinderGeometry(2.2, 3.2, 4, 32);
+    const dressMaterial = new THREE.MeshPhongMaterial({
+      color: 0xFF5722,
+      shininess: 40,
+    });
+    const dress = new THREE.Mesh(dressGeometry, dressMaterial);
+    dress.position.y = -0.5;
+    group.add(dress);
+
+    // Detailed head
+    const headGeometry = new THREE.SphereGeometry(1.2, 64, 64);
+    const headMaterial = new THREE.MeshPhongMaterial({
+      color: 0xFFE0B2,
+      shininess: 50,
+    });
+    const head = new THREE.Mesh(headGeometry, headMaterial);
+    head.position.y = 3;
+    group.add(head);
+
+    // Pigtails
+    const pigtailGeometry = new THREE.TorusGeometry(0.5, 0.2, 16, 32);
+    const pigtailMaterial = new THREE.MeshPhongMaterial({
+      color: 0x3E2723,
+      shininess: 30,
+    });
+    const leftPigtail = new THREE.Mesh(pigtailGeometry, pigtailMaterial);
+    leftPigtail.position.set(-1.5, 3.5, 0);
+    const rightPigtail = new THREE.Mesh(pigtailGeometry, pigtailMaterial);
+    rightPigtail.position.set(1.5, 3.5, 0);
+    group.add(leftPigtail, rightPigtail);
+
+    // Large eyes with glow effect
+    const eyeGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+    const eyeMaterial = new THREE.MeshPhongMaterial({
+      color: 0x000000,
+      shininess: 100,
+      emissive: 0xFF0000,
+      emissiveIntensity: 0.5,
+    });
+    const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    leftEye.position.set(-0.5, 3.2, 0.8);
+    const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    rightEye.position.set(0.5, 3.2, 0.8);
+    group.add(leftEye, rightEye);
+
+    group.position.set(0, 2.5, -40);
+    group.scale.set(3, 3, 3);
+    return group;
+  };
+
+  // Rest of the game logic remains similar but with enhanced visuals
+   // Initialize audio
+   useEffect(() => {
+    const audio = new Audio("/api/placeholder/audio");
     audio.loop = true;
     audioRef.current = audio;
+    audio.muted = isMuted;
 
     return () => {
       audio.pause();
@@ -65,11 +157,12 @@ const RedLightGreenLight = () => {
     };
   }, []);
 
+  
   useEffect(() => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.background = new THREE.Color(0x87ceeb);
-    scene.fog = new THREE.Fog(0x87ceeb, 20, 100);
+    scene.background = new THREE.Color(0x708090);
+    scene.fog = new THREE.FogExp2(0x708090, 0.02);
 
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -77,7 +170,7 @@ const RedLightGreenLight = () => {
       0.1,
       1000
     );
-    camera.position.set(0, 15, 35);
+    camera.position.set(0, 20, 40);
 
     const renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current,
@@ -85,124 +178,77 @@ const RedLightGreenLight = () => {
     });
     renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8);
     renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.maxPolarAngle = Math.PI / 2 - 0.1;
+   // Initialize OrbitControls
+   const controls = new OrbitControls(camera, renderer.domElement);
+   controls.enableDamping = true;
+   controls.dampingFactor = 0.05;
+   controls.minDistance = 20;
+   controls.maxDistance = 50;
+   controls.maxPolarAngle = Math.PI / 2 - 0.1;
+   controlsRef.current = controls;
 
-    // Ground setup
-    const groundGeometry = new THREE.PlaneGeometry(40, 100);
-    const groundMaterial = new THREE.MeshStandardMaterial({
-      color: 0xe5d1b8,
-      side: THREE.DoubleSide,
-    });
-    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
-    scene.add(ground);
-
-    // Walls
-    const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x808080 });
-    const wallGeometry = new THREE.BoxGeometry(1, 10, 100);
-    const leftWall = new THREE.Mesh(wallGeometry, wallMaterial);
-    leftWall.position.set(-20, 5, 0);
-    const rightWall = new THREE.Mesh(wallGeometry, wallMaterial);
-    rightWall.position.set(20, 5, 0);
-    scene.add(leftWall, rightWall);
-
-    // Create multiple characters
-    const characterColors = [
-      0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff, 0xffa500,
-      0x800080,
-    ];
-
-    for (let i = 0; i < 8; i++) {
-      const x = (i - 3.5) * 2;
-      const z = 20;
-      const position = new THREE.Vector3(x, 0, z);
-      const character = createCharacterModel(characterColors[i], position);
-      scene.add(character);
-      charactersRef.current.push({
-        mesh: character,
-        initialX: x,
-        eliminated: false,
+      // Add lighting
+      const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+      scene.add(ambientLight);
+  
+      const mainLight = new THREE.DirectionalLight(0xffffff, 1);
+      mainLight.position.set(50, 50, 50);
+      mainLight.castShadow = true;
+      mainLight.shadow.mapSize.width = 2048;
+      mainLight.shadow.mapSize.height = 2048;
+      scene.add(mainLight);
+  
+      // Create ground
+      const groundGeometry = new THREE.PlaneGeometry(100, 100);
+      const groundMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1a1a1a,
+        roughness: 0.8,
       });
-    }
+      const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+      ground.rotation.x = -Math.PI / 2;
+      ground.receiveShadow = true;
+      scene.add(ground);
+  
+      // Create doll
+      const doll = createGiantDoll();
+      scene.add(doll);
+      dollRef.current = doll;
+  
+      // Create players
+      const playerColors = [0xff4444, 0x44ff44, 0x4444ff, 0xffff44];
+      playerColors.forEach((color, index) => {
+        const x = (index - 1.5) * 3;
+        const position = new THREE.Vector3(x, 0, 20);
+        const player = createPlayerModel(color, position);
+        scene.add(player);
+        charactersRef.current.push({
+          mesh: player,
+          initialPos: position.clone(),
+          eliminated: false,
+        });
+      });
+  
+      const animate = () => {
+        frameRef.current = requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      };
+      animate();
+  
+      return () => {
+        cancelAnimationFrame(frameRef.current);
+        renderer.dispose();
+      };
+    }, []);
 
-    // Create doll
-    const dollGroup = new THREE.Group();
-
-    // Doll body
-    const bodyGeometry = new THREE.CylinderGeometry(1, 1.5, 4, 32);
-    const bodyMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffa726,
-      roughness: 0.3,
-    });
-    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    dollGroup.add(body);
-
-    // Doll dress
-    const dressGeometry = new THREE.CylinderGeometry(2, 3, 3, 32);
-    const dressMaterial = new THREE.MeshStandardMaterial({
-      color: 0xfdd835,
-      roughness: 0.4,
-    });
-    const dress = new THREE.Mesh(dressGeometry, dressMaterial);
-    dress.position.y = -0.5;
-    dollGroup.add(dress);
-
-    // Doll head
-    const headGeometry = new THREE.SphereGeometry(1, 32, 32);
-    const headMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffe0b2,
-      roughness: 0.2,
-    });
-    const head = new THREE.Mesh(headGeometry, headMaterial);
-    head.position.y = 2.5;
-    dollGroup.add(head);
-
-    // Doll eyes
-    const eyeGeometry = new THREE.SphereGeometry(0.2, 16, 16);
-    const eyeMaterial = new THREE.MeshStandardMaterial({
-      color: 0x000000,
-      roughness: 0.1,
-    });
-    const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-    leftEye.position.set(-0.3, 2.7, 0.7);
-    const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-    rightEye.position.set(0.3, 2.7, 0.7);
-    dollGroup.add(leftEye, rightEye);
-
-    dollGroup.position.set(0, 2, -40);
-    dollGroup.scale.set(3, 3, 3);
-    scene.add(dollGroup);
-    dollRef.current = dollGroup;
-
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1);
-    sunLight.position.set(50, 50, 50);
-    sunLight.castShadow = true;
-    scene.add(sunLight);
-
-    const animate = () => {
-      frameRef.current = requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    return () => {
-      cancelAnimationFrame(frameRef.current);
-      renderer.dispose();
-    };
-  }, []);
-
+    // Game logic
   useEffect(() => {
     if (gameState === "playing") {
-      audioRef.current?.play();
+      if (!isMuted) {
+        audioRef.current?.play();
+      }
 
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
@@ -219,26 +265,25 @@ const RedLightGreenLight = () => {
         if (shouldChange) {
           setIsGreenLight((prev) => {
             const newState = !prev;
-            if (!newState) {
-              audioRef.current?.pause();
-            } else {
-              audioRef.current?.play();
-            }
             if (dollRef.current) {
               dollRef.current.rotation.y = newState ? 0 : Math.PI;
+              dollRef.current.children
+                .filter(child => child.material?.emissive)
+                .forEach(eye => {
+                  eye.material.emissiveIntensity = newState ? 0 : 1;
+                });
             }
             return newState;
           });
         }
       }, 2000);
-
       return () => {
         clearInterval(timer);
         clearInterval(gameLoop);
         audioRef.current?.pause();
       };
     }
-  }, [gameState]);
+  }, [gameState, isMuted]);
 
   const handleMovement = (e) => {
     if (gameState !== "playing") return;
@@ -246,33 +291,18 @@ const RedLightGreenLight = () => {
     const moveSpeed = 0.5;
     let moved = false;
 
-    if (e.key === "ArrowUp" || e.key === "w") {
-      charactersRef.current.forEach((char) => {
-        if (!char.eliminated) {
+    charactersRef.current.forEach((char) => {
+      if (!char.eliminated) {
+        if (e.key === "ArrowUp" || e.key === "w") {
           char.mesh.position.z -= moveSpeed;
           moved = true;
-        }
-      });
-    }
-
-    if (e.key === "ArrowLeft" || e.key === "a") {
-      charactersRef.current.forEach((char) => {
-        if (!char.eliminated) {
-          char.mesh.position.x = Math.max(
-            -18,
-            char.mesh.position.x - moveSpeed
-          );
-        }
-      });
-    }
-
-    if (e.key === "ArrowRight" || e.key === "d") {
-      charactersRef.current.forEach((char) => {
-        if (!char.eliminated) {
+        } else if (e.key === "ArrowLeft" || e.key === "a") {
+          char.mesh.position.x = Math.max(-18, char.mesh.position.x - moveSpeed);
+        } else if (e.key === "ArrowRight" || e.key === "d") {
           char.mesh.position.x = Math.min(18, char.mesh.position.x + moveSpeed);
         }
-      });
-    }
+      }
+    });
 
     if (moved && !isGreenLight) {
       charactersRef.current.forEach((char) => {
@@ -285,13 +315,30 @@ const RedLightGreenLight = () => {
       setGameState("lost");
     }
 
-    // Check if any surviving character reached the end
     const survivingCharacter = charactersRef.current.find(
       (char) => !char.eliminated && char.mesh.position.z <= -35
     );
 
     if (survivingCharacter) {
       setGameState("won");
+    }
+  };
+
+  const startGame = () => {
+    setGameState("playing");
+    setIsGreenLight(true);
+    setTimeLeft(60);
+    setEliminatedCount(0);
+
+    // Reset characters
+    charactersRef.current.forEach((char) => {
+      char.eliminated = false;
+      char.mesh.position.copy(char.initialPos);
+      char.mesh.rotation.x = 0;
+    });
+
+    if (!isMuted) {
+      audioRef.current?.play();
     }
   };
 
@@ -307,84 +354,68 @@ const RedLightGreenLight = () => {
     }
   };
 
-  const startGame = () => {
-    setGameState("playing");
-    setIsGreenLight(true);
-    setTimeLeft(60);
-    setEliminatedCount(0);
-
-    // Reset all characters
-    charactersRef.current.forEach((char) => {
-      char.eliminated = false;
-      char.mesh.position.set(char.initialX, 0, 20);
-      char.mesh.rotation.x = 0;
-    });
-
-    if (!isMuted) {
-      audioRef.current?.play();
-    }
-  };
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
-      <div className="mb-4 text-white text-center">
-        <div className="flex items-center justify-between w-full mb-4">
-          <h1 className="text-4xl font-bold">Red Light, Green Light</h1>
-          <button
-            onClick={toggleMute}
-            className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
-          >
-            {isMuted ? "🔇" : "🔊"}
-          </button>
-        </div>
-        <div className="mb-2">
-          {gameState === "waiting" && (
-            <button
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
-              onClick={startGame}
-            >
-              Start Game
-            </button>
-          )}
-          {gameState === "playing" && (
-            <div className="space-y-2">
-              <div className="text-2xl">
-                {isGreenLight ? "🟢 Green Light!" : "🔴 Red Light!"}
-              </div>
-              <div className="text-xl">
-                Time Left: {timeLeft}s | Eliminated: {eliminatedCount}
-              </div>
-            </div>
-          )}
-          {gameState === "won" && (
-            <div className="text-2xl text-green-500">
-              You Won!{" "}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-pink-500 via-red-500 to-yellow-500">
+      <div className="relative w-full max-w-4xl">
+        <div className="absolute top-0 left-0 right-0 z-10 p-4 text-center">
+          <div className="backdrop-blur-md bg-black/50 rounded-xl p-6 shadow-2xl">
+            <div className="absolute top-4 right-4">
               <button
-                onClick={startGame}
-                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded ml-2"
+                onClick={toggleMute}
+                className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                aria-label={isMuted ? "Unmute" : "Mute"}
               >
-                Play Again
+                {isMuted ? (
+                  <Volume className="w-6 h-6 text-white" />
+                ) : (
+                  <Volume2 className="w-6 h-6 text-white" />
+                )}
               </button>
             </div>
-          )}
-          {gameState === "lost" && (
-            <div className="text-2xl text-red-500">
-              Eliminated!{" "}
-              <button
-                onClick={startGame}
-                className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2"
-              >
-                Try Again
-              </button>
+            <h1 className="text-6xl font-bold text-white mb-4 font-['Roboto'] tracking-wider">
+              {gameState === "waiting" ? "SQUID GAME" : "456"}
+            </h1>
+            <div className="space-y-4">
+              {gameState === "waiting" && (
+                <button
+                  onClick={startGame}
+                  className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-full text-xl transform transition hover:scale-105 shadow-lg"
+                >
+                Start Game
+                </button>
+              )}
+              {gameState === "playing" && (
+                <div className="space-y-2">
+                  <div className="text-3xl font-bold text-white">
+                    {isGreenLight ? "GREEN LIGHT" : "RED LIGHT!"}
+                  </div>
+                  <div className="text-2xl text-white">
+                    Time: {timeLeft}s | Eliminated: {eliminatedCount}
+                  </div>
+                </div>
+              )}
+              {(gameState === "won" || gameState === "lost") && (
+                <div className={`text-3xl ${gameState === "won" ? "text-green-400" : "text-red-400"} font-bold`}>
+                  {gameState === "won" ? "Won" : "Try Again"}{" "}
+                  <button
+                    onClick={startGame}
+                    className="bg-white/10 hover:bg-white/20 text-white font-bold py-2 px-6 rounded-full ml-4 text-xl"
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
-      </div>
-      <canvas ref={canvasRef} className="rounded-lg shadow-lg" />
-      <div className="mt-4 text-white text-center space-y-1">
-        <p>Use W/Up Arrow to move all characters forward</p>
-        <p>Use A/Left Arrow and D/Right Arrow to move sideways</p>
-        <p>Don&apos;t move when the doll turns around!</p>
+        <canvas ref={canvasRef} className="rounded-2xl shadow-2xl" />
+        <div className="absolute bottom-0 left-0 right-0 p-4 text-center">
+          <div className="backdrop-blur-md bg-black/50 text-white rounded-xl p-4">
+            <p className="font-bold">Controls:</p>
+            <p>W/↑ - Move Forward | A/← D/→ - Move Sideways</p>
+            <p className="text-red-400">Don&apos;t move when the doll turns around!</p>
+          </div>
+        </div>
       </div>
     </div>
   );
