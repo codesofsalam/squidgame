@@ -194,7 +194,7 @@ const RedLightGreenLight = () => {
     rightEye.position.set(0.5, 3.2, 0.8);
     group.add(leftEye, rightEye);
 
-    group.position.set(0, 2.5, -50);
+    group.position.set(0, 2.5, -40);
     group.scale.set(4, 4, 4);
     return group;
   };
@@ -359,7 +359,7 @@ const RedLightGreenLight = () => {
     if (isMoving && gameState === "playing") {
       movementIntervalRef.current = setInterval(() => {
         let playersAtDestination = 0;
-        let currentActivePlayers = charactersRef.current.filter(
+        let activePlayers = charactersRef.current.filter(
           (char) => !char.eliminated
         ).length;
 
@@ -367,9 +367,14 @@ const RedLightGreenLight = () => {
           if (!char.eliminated) {
             if (!char.reachedDestination) {
               char.isMoving = true;
-              char.mesh.position.z -= char.moveSpeed * 0.5;
-
-              if (char.mesh.position.z <= -45) {
+              // Calculate new position
+              const newZ = char.mesh.position.z - char.moveSpeed * 0.5;
+              
+              // Stop exactly at -40 (in front of doll)
+              if (newZ > -25) {
+                char.mesh.position.z = newZ;
+              } else {
+                char.mesh.position.z = -25; // Ensure player stops exactly at -40
                 char.reachedDestination = true;
                 char.isMoving = false;
                 playersAtDestination++;
@@ -380,6 +385,7 @@ const RedLightGreenLight = () => {
           }
         });
 
+        // Check win conditions
         if (!isGreenLight) {
           const movingPlayers = charactersRef.current.filter(
             (char) =>
@@ -387,27 +393,25 @@ const RedLightGreenLight = () => {
           );
 
           if (movingPlayers.length > 0) {
-            const randomIndex = Math.floor(
-              Math.random() * movingPlayers.length
-            );
+            const randomIndex = Math.floor(Math.random() * movingPlayers.length);
             const playerToEliminate = movingPlayers[randomIndex];
-
             playerToEliminate.eliminated = true;
             playerToEliminate.mesh.rotation.x = Math.PI / 2;
           }
         }
 
-        if (currentActivePlayers === 0) {
+        // Handle game over conditions
+        if (activePlayers === 0) {
           setGameState("lost");
           setIsMoving(false);
           clearInterval(movementIntervalRef.current);
           return;
         }
 
-        if (
-          playersAtDestination === currentActivePlayers &&
-          currentActivePlayers > 0
-        ) {
+        // Win condition: if all active players have reached destination
+        // For single player, they win when they reach the destination
+        // For multiple players, they need to wait for others
+        if (playersAtDestination === activePlayers && activePlayers > 0) {
           setGameState("won");
           setIsMoving(false);
           clearInterval(movementIntervalRef.current);
@@ -420,6 +424,7 @@ const RedLightGreenLight = () => {
       };
     }
   }, [isMoving, gameState, isGreenLight]);
+
 
   useEffect(() => {
     if (gameState === "playing") {
@@ -491,6 +496,7 @@ const RedLightGreenLight = () => {
             </div>
           </div>
 
+          {/* Mute Button */}
           <div className="absolute top-0 right-0 p-4 z-20">
             <button
               onClick={toggleMute}
@@ -505,24 +511,29 @@ const RedLightGreenLight = () => {
             </button>
           </div>
 
-          {/* Game Controls */}
+          {/* Updated Game Controls to match the image */}
           {gameState === "playing" && (
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-8">
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-4">
               <button
                 onClick={() => setIsMoving(true)}
-                className={`w-16 h-16 rounded-full ${
-                  isMoving ? "bg-blue-700" : "bg-blue-500 hover:bg-blue-600"
-                } flex items-center justify-center shadow-lg transition-all`}
+                className={`w-20 h-20 rounded-full ${
+                  isMoving
+                    ? "bg-blue-500 ring-4 ring-blue-300"
+                    : "bg-blue-500 hover:bg-blue-600"
+                } flex items-center justify-center shadow-lg transition-colors`}
               >
-                <div className="w-12 h-12 rounded-full bg-blue-400" />
+                <div className="w-16 h-16 rounded-full bg-white/30" />
               </button>
 
               <button
                 onClick={() => setIsMoving(false)}
-                className="w-16 h-16 rounded-lg bg-red-500 hover:bg-red-600 active:bg-red-700
-                  flex items-center justify-center shadow-lg transition-all"
+                className={`w-20 h-20 rounded-full ${
+                  !isMoving
+                    ? "bg-red-500 ring-4 ring-red-300"
+                    : "bg-red-500 hover:bg-red-600"
+                } flex items-center justify-center shadow-lg transition-colors`}
               >
-                <div className="w-8 h-8 rotate-45 bg-red-400" />
+                <div className="w-16 h-16 rounded-full bg-white/30" />
               </button>
             </div>
           )}
