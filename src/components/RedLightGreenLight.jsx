@@ -12,6 +12,7 @@ const RedLightGreenLight = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [showGame, setShowGame] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(300); // 5 minutes in seconds
   const canvasRef = useRef(null);
   const sceneRef = useRef(null);
   const charactersRef = useRef([]);
@@ -22,52 +23,104 @@ const RedLightGreenLight = () => {
   const greenLightTimerRef = useRef(null);
   const dollRotationRef = useRef(0);
   const movementIntervalRef = useRef(null);
+  const timerIntervalRef = useRef(null);
 
   const createPlayerModel = (color, position) => {
     const group = new THREE.Group();
   
-    // Main body (jumpsuit)
-    const bodyGeometry = new THREE.CapsuleGeometry(0.5, 1.6, 8, 16);
-    const bodyMaterial = new THREE.MeshPhongMaterial({
+    // Body (torso)
+    const torsoGeometry = new THREE.CapsuleGeometry(0.3, 0.8, 8, 16);
+    const torsoMaterial = new THREE.MeshPhongMaterial({
       color: 0x2E8B57,
       shininess: 20,
     });
-    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-    body.position.y = 1.4;
-    body.castShadow = true;
-    group.add(body);
+    const torso = new THREE.Mesh(torsoGeometry, torsoMaterial);
+    torso.position.y = 1.4;
+    torso.castShadow = true;
+    group.add(torso);
   
-    // Black hood
-    const hoodGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-    const hoodMaterial = new THREE.MeshPhongMaterial({
-      color: 0x000000,
+    // Head
+    const headGeometry = new THREE.SphereGeometry(0.25, 32, 32);
+    const headMaterial = new THREE.MeshPhongMaterial({
+      color: 0xFFE0B2,
       shininess: 40,
     });
-    const hood = new THREE.Mesh(hoodGeometry, hoodMaterial);
-    hood.position.y = 2.8;
-    hood.scale.set(1, 0.8, 1);
-    hood.castShadow = true;
-    group.add(hood);
+    const head = new THREE.Mesh(headGeometry, headMaterial);
+    head.position.y = 2.1;
+    head.castShadow = true;
+    group.add(head);
   
-    // White mask
-    const maskGeometry = new THREE.PlaneGeometry(0.8, 0.8);
-    const maskMaterial = new THREE.MeshPhongMaterial({
-      color: 0xFFFFFF,
-      side: THREE.DoubleSide,
+    // Hair
+    const hairGeometry = new THREE.SphereGeometry(0.26, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2);
+    const hairMaterial = new THREE.MeshPhongMaterial({
+      color: 0x3E2723,
+      shininess: 30,
     });
-    const mask = new THREE.Mesh(maskGeometry, maskMaterial);
-    mask.position.set(0, 2.8, 0.3);
-    mask.castShadow = true;
-    group.add(mask);
+    const hair = new THREE.Mesh(hairGeometry, hairMaterial);
+    hair.position.y = 2.2;
+    hair.castShadow = true;
+    group.add(hair);
   
-    // Add circle symbol
-    const symbolGeometry = new THREE.CircleGeometry(0.2, 32);
+    // Arms (left and right)
+    const createArm = (isLeft) => {
+      const armGroup = new THREE.Group();
+      
+      // Upper arm
+      const upperArmGeometry = new THREE.CapsuleGeometry(0.1, 0.4, 8, 16);
+      const upperArm = new THREE.Mesh(upperArmGeometry, torsoMaterial);
+      upperArm.position.y = -0.2;
+      
+      // Elbow (joint)
+      const elbowGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+      const elbow = new THREE.Mesh(elbowGeometry, torsoMaterial);
+      elbow.position.y = -0.4;
+      
+      // Lower arm
+      const lowerArmGeometry = new THREE.CapsuleGeometry(0.08, 0.4, 8, 16);
+      const lowerArm = new THREE.Mesh(lowerArmGeometry, torsoMaterial);
+      lowerArm.position.y = -0.6;
+      
+      armGroup.add(upperArm, elbow, lowerArm);
+      armGroup.position.set(isLeft ? -0.4 : 0.4, 1.8, 0);
+      return armGroup;
+    };
+    
+    group.add(createArm(true), createArm(false));
+  
+    // Legs (left and right)
+    const createLeg = (isLeft) => {
+      const legGroup = new THREE.Group();
+      
+      // Upper leg
+      const upperLegGeometry = new THREE.CapsuleGeometry(0.12, 0.5, 8, 16);
+      const upperLeg = new THREE.Mesh(upperLegGeometry, torsoMaterial);
+      upperLeg.position.y = -0.25;
+      
+      // Knee (joint)
+      const kneeGeometry = new THREE.SphereGeometry(0.12, 16, 16);
+      const knee = new THREE.Mesh(kneeGeometry, torsoMaterial);
+      knee.position.y = -0.5;
+      
+      // Lower leg
+      const lowerLegGeometry = new THREE.CapsuleGeometry(0.1, 0.5, 8, 16);
+      const lowerLeg = new THREE.Mesh(lowerLegGeometry, torsoMaterial);
+      lowerLeg.position.y = -0.75;
+      
+      legGroup.add(upperLeg, knee, lowerLeg);
+      legGroup.position.set(isLeft ? -0.2 : 0.2, 1, 0);
+      return legGroup;
+    };
+    
+    group.add(createLeg(true), createLeg(false));
+  
+    // Player number/symbol
+    const symbolGeometry = new THREE.CircleGeometry(0.15, 32);
     const symbolMaterial = new THREE.MeshPhongMaterial({
       color: color,
       side: THREE.DoubleSide,
     });
     const symbol = new THREE.Mesh(symbolGeometry, symbolMaterial);
-    symbol.position.set(0, 2.8, 0.31);
+    symbol.position.set(0, 1.6, 0.31);
     group.add(symbol);
   
     group.position.copy(position);
@@ -153,8 +206,9 @@ const RedLightGreenLight = () => {
   useEffect(() => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.background = new THREE.Color(0x708090);
-    scene.fog = new THREE.FogExp2(0x708090, 0.01);
+    // Change background to wheat color to match the image
+    scene.background = new THREE.Color(0xF5DEB3);
+    scene.fog = new THREE.FogExp2(0xF5DEB3, 0.008);
 
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -192,7 +246,8 @@ const RedLightGreenLight = () => {
 
     const groundGeometry = new THREE.PlaneGeometry(200, 200);
     const groundMaterial = new THREE.MeshStandardMaterial({
-      color: 0x1a1a1a,
+      // Change ground color to match the image
+      color: 0xCCCCCC,
       roughness: 0.8,
     });
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
@@ -269,7 +324,6 @@ const RedLightGreenLight = () => {
             });
         }
 
-      
         const greenLightDuration = 5000 + Math.random() * 7000;
         greenLightTimerRef.current = setTimeout(() => {
           setIsGreenLight(false);
@@ -297,18 +351,14 @@ const RedLightGreenLight = () => {
     if (isMoving && gameState === "playing") {
       movementIntervalRef.current = setInterval(() => {
         let playersAtDestination = 0;
-        let currentActivePlayers = 0;
+        let currentActivePlayers = charactersRef.current.filter(char => !char.eliminated).length;
 
         charactersRef.current.forEach((char) => {
           if (!char.eliminated) {
-            currentActivePlayers++;
-            
             if (!char.reachedDestination) {
               char.isMoving = true;
               char.mesh.position.z -= char.moveSpeed * 0.5;
 
-              // Check if player reached destination
-           
               if (char.mesh.position.z <= -45) {
                 char.reachedDestination = true;
                 char.isMoving = false;
@@ -320,44 +370,31 @@ const RedLightGreenLight = () => {
           }
         });
 
-          // Update active players count
-          setActivePlayers(currentActivePlayers);
+        setActivePlayers(currentActivePlayers);
 
-          if (!isGreenLight) {
-            const movingPlayers = charactersRef.current.filter(
-              char => !char.eliminated && char.isMoving && !char.reachedDestination
-            );
+        if (!isGreenLight) {
+          const movingPlayers = charactersRef.current.filter(
+            char => !char.eliminated && char.isMoving && !char.reachedDestination
+          );
+          
+          if (movingPlayers.length > 0) {
+            const randomIndex = Math.floor(Math.random() * movingPlayers.length);
+            const playerToEliminate = movingPlayers[randomIndex];
             
-            if (movingPlayers.length > 0) {
-              const randomIndex = Math.floor(Math.random() * movingPlayers.length);
-              const playerToEliminate = movingPlayers[randomIndex];
-              
-              playerToEliminate.eliminated = true;
-              playerToEliminate.mesh.rotation.x = Math.PI / 2;
-              setEliminatedCount(prev => prev + 1);
-              setActivePlayers(prev => prev - 1); // Decrease active players count
-            }
+            playerToEliminate.eliminated = true;
+            playerToEliminate.mesh.rotation.x = Math.PI / 2;
+            setEliminatedCount(prev => prev + 1);
+            setActivePlayers(prev => prev - 1);
           }
+        }
 
-           // Use activePlayers for win/lose conditions
         if (currentActivePlayers === 0) {
           setGameState("lost");
           setIsMoving(false);
           clearInterval(movementIntervalRef.current);
           return;
         }
-        // Check win/lose conditions
-        const remainingPlayers = charactersRef.current.filter(char => !char.eliminated).length;
-        
-        // Game is lost if all players are eliminated
-        if (remainingPlayers === 0) {
-          setGameState("lost");
-          setIsMoving(false);
-          clearInterval(movementIntervalRef.current);
-          return;
-        }
 
-        // Game is won only if all surviving players reach the destination
         if (playersAtDestination === currentActivePlayers && currentActivePlayers > 0) {
           setGameState("won");
           setIsMoving(false);
@@ -373,16 +410,35 @@ const RedLightGreenLight = () => {
     }
   }, [isMoving, gameState, isGreenLight]);
 
+
+  useEffect(() => {
+    if (gameState === "playing") {
+      timerIntervalRef.current = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 0) {
+            setGameState("lost");
+            clearInterval(timerIntervalRef.current);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timerIntervalRef.current);
+    }
+  }, [gameState]);
+
   const startGame = () => {
     setShowGame(true);
     setGameState("playing");
     setIsGreenLight(true);
     setEliminatedCount(0);
+    setTimeRemaining(300); // Reset timer to 5 minutes
     dollRotationRef.current = 0;
     setIsMoving(false);
 
-    const initialPlayerCount = charactersRef.current.length;
-    setActivePlayers(initialPlayerCount);
+    
+    setActivePlayers(6);
 
     charactersRef.current.forEach((char) => {
       char.eliminated = false;
@@ -390,12 +446,19 @@ const RedLightGreenLight = () => {
       char.mesh.rotation.x = 0;
       char.isMoving = false;
       char.reachedDestination = false;
-      char.moveSpeed = 0.1 + Math.random() * 0.15;
+      char.moveSpeed = 0.2 + Math.random() * 0.15; // Increased base speed
     });
 
     if (!isMuted) {
       audioRef.current?.play();
     }
+  };
+
+  
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const toggleMute = () => {
@@ -406,7 +469,7 @@ const RedLightGreenLight = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-black">
+    <div className="relative w-screen h-screen overflow-hidden bg-[#F5DEB3]">
       <StartScreen 
         onStart={startGame} 
         isVisible={!showGame}
@@ -420,6 +483,13 @@ const RedLightGreenLight = () => {
       {/* Game UI Elements - Only shown when game is active */}
       {showGame && (
         <>
+          {/* Timer Display */}
+          <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
+            <div className="bg-black text-red-600 px-6 py-3 rounded-lg text-4xl font-digital">
+              {formatTime(timeRemaining)}
+            </div>
+          </div>
+
           <div className="absolute top-0 inset-x-0 p-4 z-20 flex justify-between items-start">
             {gameState === "playing" && (
               <div className="bg-black/50 backdrop-blur-sm rounded-lg p-3 space-y-2">
@@ -432,7 +502,6 @@ const RedLightGreenLight = () => {
               </div>
             )}
             
-            {/* Mute Button */}
             <button
               onClick={toggleMute}
               className="bg-black/50 backdrop-blur-sm p-3 rounded-lg hover:bg-black/70 transition-colors"
@@ -445,6 +514,7 @@ const RedLightGreenLight = () => {
               )}
             </button>
           </div>
+
           {/* Game Controls */}
           {gameState === "playing" && (
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-8">
@@ -503,4 +573,5 @@ const RedLightGreenLight = () => {
     </div>
   );
 };
+
 export default RedLightGreenLight;
