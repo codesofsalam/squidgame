@@ -7,11 +7,11 @@ import StartScreen from "./StartScreen";
 const RedLightGreenLight = () => {
   const [gameState, setGameState] = useState("waiting");
   const [isGreenLight, setIsGreenLight] = useState(false);
-
   const [isMuted, setIsMuted] = useState(false);
   const [showGame, setShowGame] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(300); // 5 minutes in seconds
+  const [timeRemaining, setTimeRemaining] = useState(300);
+
   const canvasRef = useRef(null);
   const sceneRef = useRef(null);
   const charactersRef = useRef([]);
@@ -19,10 +19,11 @@ const RedLightGreenLight = () => {
   const frameRef = useRef(null);
   const audioRef = useRef(null);
   const controlsRef = useRef(null);
-  const greenLightTimerRef = useRef(null);
+  const lightTimerRef = useRef(null);
   const dollRotationRef = useRef(0);
   const movementIntervalRef = useRef(null);
   const timerIntervalRef = useRef(null);
+  const lightCycleRef = useRef(null);
 
   const createPlayerModel = (color, position) => {
     const group = new THREE.Group();
@@ -38,6 +39,7 @@ const RedLightGreenLight = () => {
     torso.castShadow = true;
     group.add(torso);
 
+    // Head
     // Head
     const headGeometry = new THREE.SphereGeometry(0.25, 32, 32);
     const headMaterial = new THREE.MeshPhongMaterial({
@@ -201,7 +203,7 @@ const RedLightGreenLight = () => {
 
   useEffect(() => {
     const audio = new Audio("/squid.mp3");
-    audio.loop = true;
+    audio.loop = false; // Set to false for manual control
     audioRef.current = audio;
     audio.muted = isMuted;
 
@@ -317,11 +319,8 @@ const RedLightGreenLight = () => {
 
   useEffect(() => {
     if (gameState === "playing") {
-      if (!isMuted) {
-        audioRef.current?.play();
-      }
-
-      const switchLights = () => {
+      const startLightCycle = () => {
+        // Start with green light and set its duration timer
         setIsGreenLight(true);
         if (dollRef.current) {
           dollRef.current.rotation.y = 0;
@@ -332,25 +331,67 @@ const RedLightGreenLight = () => {
             });
         }
 
-        const greenLightDuration = 5000 + Math.random() * 7000;
-        greenLightTimerRef.current = setTimeout(() => {
-          setIsGreenLight(false);
-          if (dollRef.current) {
-            dollRef.current.children
-              .filter((child) => child.material?.emissive)
-              .forEach((eye) => {
-                eye.material.emissiveIntensity = 1;
-              });
+        // Play audio from start
+        if (audioRef.current && !isMuted) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play();
+        }
+
+        // Store the light cycle timeline
+        lightCycleRef.current = {
+          greenLight: setTimeout(() => {
+            setIsGreenLight(false);
+            if (dollRef.current) {
+              dollRef.current.children
+                .filter((child) => child.material?.emissive)
+                .forEach((eye) => {
+                  eye.material.emissiveIntensity = 1;
+                });
+            }
+
+            // Red light duration timer
+            lightCycleRef.current.redLight = setTimeout(() => {
+              if (gameState === "playing") {
+                startLightCycle(); // Restart the cycle
+              }
+            }, 4000);
+          }, 11000)
+        };
+
+        // Set up individual light duration timer for UI feedback
+        let greenLightDuration = 11; // seconds
+        lightTimerRef.current = setInterval(() => {
+          greenLightDuration--;
+          if (greenLightDuration <= 0) {
+            clearInterval(lightTimerRef.current);
+            
+            // Start red light timer
+            let redLightDuration = 4; // seconds
+            lightTimerRef.current = setInterval(() => {
+              redLightDuration--;
+              if (redLightDuration <= 0) {
+                clearInterval(lightTimerRef.current);
+              }
+            }, 1000);
           }
-          setTimeout(switchLights, 2000 + Math.random() * 2000);
-        }, greenLightDuration);
+        }, 1000);
       };
 
-      switchLights();
+      startLightCycle();
 
+      // Cleanup function
       return () => {
-        clearTimeout(greenLightTimerRef.current);
-        audioRef.current?.pause();
+        if (lightCycleRef.current) {
+          clearTimeout(lightCycleRef.current.greenLight);
+          clearTimeout(lightCycleRef.current.redLight);
+        }
+        if (lightTimerRef.current) {
+          clearInterval(lightTimerRef.current);
+        }
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        }
       };
     }
   }, [gameState, isMuted]);
@@ -367,14 +408,12 @@ const RedLightGreenLight = () => {
           if (!char.eliminated) {
             if (!char.reachedDestination) {
               char.isMoving = true;
-              // Calculate new position
               const newZ = char.mesh.position.z - char.moveSpeed * 0.5;
               
-              // Stop exactly at -40 (in front of doll)
               if (newZ > -25) {
                 char.mesh.position.z = newZ;
               } else {
-                char.mesh.position.z = -25; // Ensure player stops exactly at -40
+                char.mesh.position.z = -25;
                 char.reachedDestination = true;
                 char.isMoving = false;
                 playersAtDestination++;
@@ -385,7 +424,7 @@ const RedLightGreenLight = () => {
           }
         });
 
-        // Check win conditions
+        // Check for eliminations during red light
         if (!isGreenLight) {
           const movingPlayers = charactersRef.current.filter(
             (char) =>
@@ -400,7 +439,7 @@ const RedLightGreenLight = () => {
           }
         }
 
-        // Handle game over conditions
+        // Game over conditions
         if (activePlayers === 0) {
           setGameState("lost");
           setIsMoving(false);
@@ -408,9 +447,6 @@ const RedLightGreenLight = () => {
           return;
         }
 
-        // Win condition: if all active players have reached destination
-        // For single player, they win when they reach the destination
-        // For multiple players, they need to wait for others
         if (playersAtDestination === activePlayers && activePlayers > 0) {
           setGameState("won");
           setIsMoving(false);
@@ -444,14 +480,23 @@ const RedLightGreenLight = () => {
   }, [gameState]);
 
   const startGame = () => {
+    // Clear any existing timers
+    if (lightCycleRef.current) {
+      clearTimeout(lightCycleRef.current.greenLight);
+      clearTimeout(lightCycleRef.current.redLight);
+    }
+    if (lightTimerRef.current) {
+      clearInterval(lightTimerRef.current);
+    }
+    
     setShowGame(true);
     setGameState("playing");
     setIsGreenLight(true);
-
     setTimeRemaining(300);
     dollRotationRef.current = 0;
     setIsMoving(false);
 
+    // Reset all characters
     charactersRef.current.forEach((char) => {
       char.eliminated = false;
       char.mesh.position.copy(char.initialPos);
@@ -461,11 +506,14 @@ const RedLightGreenLight = () => {
       char.moveSpeed = 0.2 + Math.random() * 0.15;
     });
 
-    if (!isMuted) {
-      audioRef.current?.play();
+    // Reset and start audio
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      if (!isMuted) {
+        audioRef.current.play();
+      }
     }
   };
-
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -484,19 +532,16 @@ const RedLightGreenLight = () => {
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-[#F5DEB3]">
       <StartScreen onStart={startGame} isVisible={!showGame} />
-
       <canvas ref={canvasRef} className="relative w-full h-full z-10" />
 
       {showGame && (
         <>
-          {/* Timer Display */}
           <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
             <div className="bg-black text-red-600 px-6 py-3 rounded-lg text-4xl font-digital">
               {formatTime(timeRemaining)}
             </div>
           </div>
 
-          {/* Mute Button */}
           <div className="absolute top-0 right-0 p-4 z-20">
             <button
               onClick={toggleMute}
@@ -511,7 +556,6 @@ const RedLightGreenLight = () => {
             </button>
           </div>
 
-          {/* Updated Game Controls to match the image */}
           {gameState === "playing" && (
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-4">
               <button
@@ -538,7 +582,6 @@ const RedLightGreenLight = () => {
             </div>
           )}
 
-          {/* Game Over/Win Screen */}
           {(gameState === "won" || gameState === "lost") && (
             <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm">
               <div className="text-center space-y-6 bg-black/70 p-8 rounded-2xl shadow-2xl">
@@ -549,7 +592,6 @@ const RedLightGreenLight = () => {
                 >
                   {gameState === "won" ? "YOU WIN!" : "GAME OVER"}
                 </h2>
-
                 <button
                   onClick={startGame}
                   className="px-8 py-4 bg-white/20 rounded-lg hover:bg-white/30 
