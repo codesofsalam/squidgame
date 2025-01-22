@@ -16,18 +16,34 @@ const StartScreen = ({ onStart, isVisible }) => {
     >
       <style>
         {`
-          
           @media (max-width: 768px) {
             .start-screen-bg {
               background-image: url('/logomob.gif');
             }
           }
-
-      
+          
           @media (min-width: 769px) {
             .start-screen-bg {
               background-image: url('/logo.gif');
             }
+          }
+
+          @keyframes textGlow {
+            0%, 100% {
+              text-shadow: 0 0 10px #ff0080, 0 0 20px #ff0080, 0 0 30px #ff0080;
+            }
+            50% {
+              text-shadow: 0 0 20px #ff0080, 0 0 30px #ff0080, 0 0 40px #ff0080;
+            }
+          }
+
+          .squid-game-text {
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            letter-spacing: 0.2em;
+            animation: textGlow 2s infinite;
+            text-transform: uppercase;
           }
         `}
       </style>
@@ -41,7 +57,7 @@ const StartScreen = ({ onStart, isVisible }) => {
           onClick={onStart}
           className="w-64 md:w-96 mt-48 md:mt-72 h-auto mx-auto cursor-pointer transition-transform hover:scale-105 active:scale-95"
         />
-        <p className="text-white text-lg md:text-xl mt-2 md:mt-4 text-center tracking-wide shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
+        <p className="squid-game-text text-lg md:text-2xl mt-2 md:mt-4">
           Click Above to Start
         </p>
       </div>
