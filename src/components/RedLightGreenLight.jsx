@@ -677,22 +677,34 @@ const RedLightGreenLight = () => {
                 <button
                   onClick={() => setIsMoving(true)}
                   className={`w-20 h-20 sm:w-24 sm:h-24 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full 
-                    ${isMoving ? "bg-blue-500 ring-4 ring-blue-300" : "bg-blue-500 active:bg-blue-600"} 
+                    ${
+                      isMoving
+                        ? "bg-blue-500 ring-4 ring-blue-300"
+                        : "bg-blue-500 active:bg-blue-600"
+                    } 
                     flex items-center justify-center shadow-lg transition-colors touch-none`}
                 >
                   <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-white/30 flex items-center justify-center">
-                    <span className="text-white text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold">O</span>
+                    <span className="text-white text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold">
+                      O
+                    </span>
                   </div>
                 </button>
 
                 <button
                   onClick={() => setIsMoving(false)}
                   className={`w-20 h-20 sm:w-24 sm:h-24 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full 
-                    ${!isMoving ? "bg-red-500 ring-4 ring-red-300" : "bg-red-500 active:bg-red-600"} 
+                    ${
+                      !isMoving
+                        ? "bg-red-500 ring-4 ring-red-300"
+                        : "bg-red-500 active:bg-red-600"
+                    } 
                     flex items-center justify-center shadow-lg transition-colors touch-none`}
                 >
                   <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-white/30 flex items-center justify-center">
-                    <span className="text-white text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold">X</span>
+                    <span className="text-white text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold">
+                      X
+                    </span>
                   </div>
                 </button>
               </div>
@@ -703,20 +715,24 @@ const RedLightGreenLight = () => {
             <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/80 backdrop-blur-md px-4">
               <div className="text-center space-y-6 bg-gradient-to-b from-black/90 to-black/70 p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md md:max-w-lg border border-white/10">
                 <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 mx-auto mb-4">
-                  <img 
-                    src={gameState === "won" ? "/youwon.jpg" : "/gameover.gif"} 
+                  <img
+                    src={gameState === "won" ? "/youwon.jpg" : "/gameover.gif"}
                     alt={gameState === "won" ? "Victory" : "Game Over"}
                     className="w-full h-full object-cover rounded-2xl"
                   />
                 </div>
-                
-                <h2 className={`text-4xl sm:text-5xl md:text-6xl font-bold 
-                  ${gameState === "won" 
-                    ? "text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500" 
-                    : "text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-rose-600"}`}>
+
+                <h2
+                  className={`text-4xl sm:text-5xl md:text-6xl font-bold 
+                  ${
+                    gameState === "won"
+                      ? "text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500"
+                      : "text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-rose-600"
+                  }`}
+                >
                   {gameState === "won" ? "YOU WIN!" : "GAME OVER"}
                 </h2>
-                
+
                 <button
                   onClick={startGame}
                   className="group relative w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 
@@ -727,9 +743,10 @@ const RedLightGreenLight = () => {
                   <span className="relative z-10 text-white text-xl sm:text-2xl font-bold tracking-wide">
                     Play Again
                   </span>
-                  <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full 
-                    group-hover:translate-x-full transition-transform duration-700 ease-in-out">
-                  </div>
+                  <div
+                    className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full 
+                    group-hover:translate-x-full transition-transform duration-700 ease-in-out"
+                  ></div>
                 </button>
               </div>
             </div>
