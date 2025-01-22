@@ -659,8 +659,8 @@ const RedLightGreenLight = () => {
 
       {showGame && (
         <>
-          <div className="absolute top-4 md:top-8 left-1/2 transform -translate-x-1/2 z-20">
-            <div className="bg-black text-red-600 px-4 md:px-6 py-2 md:py-3 rounded-lg text-2xl md:text-4xl font-digital">
+          <div className="absolute top-4 sm:top-6 md:top-8 left-1/2 transform -translate-x-1/2 z-20">
+            <div className="bg-black text-red-600 px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-lg text-xl sm:text-2xl md:text-4xl font-digital">
               {formatTime(timeRemaining)}
             </div>
           </div>
@@ -668,56 +668,64 @@ const RedLightGreenLight = () => {
           <div className="absolute top-4 right-4 z-20">
             <button
               onClick={toggleMute}
-              className="bg-black/50 backdrop-blur-sm p-2 md:p-3 rounded-lg hover:bg-black/70 transition-colors"
+              className="bg-black/50 backdrop-blur-sm p-1.5 sm:p-2 md:p-3 rounded-lg hover:bg-black/70 transition-colors"
               aria-label={isMuted ? "Unmute" : "Mute"}
             >
               {isMuted ? (
-                <Volume className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                <Volume className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
               ) : (
-                <Volume2 className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
               )}
             </button>
           </div>
 
           {gameState === "playing" && (
-            <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-4">
-              <button
-                onClick={() => setIsMoving(true)}
-                className={`w-16 h-16 md:w-20 md:h-20 rounded-full ${
-                  isMoving
-                    ? "bg-blue-500 ring-2 md:ring-4 ring-blue-300"
-                    : "bg-blue-500 hover:bg-blue-600"
-                } flex items-center justify-center shadow-lg transition-colors`}
-              >
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/30 flex items-center justify-center">
-                  <span className="text-white text-xl md:text-4xl font-bold">
-                    O
-                  </span>
-                </div>
-              </button>
+            <div className="fixed bottom-0 left-0 right-0 z-20 p-4 sm:p-6 md:static">
+              <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8">
+                <button
+                  onClick={() => setIsMoving(true)}
+                  className={`w-20 h-20 sm:w-24 sm:h-24 md:w-20 md:h-20 rounded-full 
+                    ${
+                      isMoving
+                        ? "bg-blue-500 ring-4 ring-blue-300"
+                        : "bg-blue-500 active:bg-blue-600"
+                    } 
+                    flex items-center justify-center shadow-lg transition-colors
+                    touch-none`}
+                >
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-16 md:h-16 rounded-full bg-white/30 flex items-center justify-center">
+                    <span className="text-white text-3xl sm:text-4xl md:text-4xl font-bold">
+                      O
+                    </span>
+                  </div>
+                </button>
 
-              <button
-                onClick={() => setIsMoving(false)}
-                className={`w-16 h-16 md:w-20 md:h-20 rounded-full ${
-                  !isMoving
-                    ? "bg-red-500 ring-2 md:ring-4 ring-red-300"
-                    : "bg-red-500 hover:bg-red-600"
-                } flex items-center justify-center shadow-lg transition-colors`}
-              >
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/30 flex items-center justify-center">
-                  <span className="text-white text-xl md:text-4xl font-bold">
-                    X
-                  </span>
-                </div>
-              </button>
+                <button
+                  onClick={() => setIsMoving(false)}
+                  className={`w-20 h-20 sm:w-24 sm:h-24 md:w-20 md:h-20 rounded-full 
+                    ${
+                      !isMoving
+                        ? "bg-red-500 ring-4 ring-red-300"
+                        : "bg-red-500 active:bg-red-600"
+                    } 
+                    flex items-center justify-center shadow-lg transition-colors
+                    touch-none`}
+                >
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-16 md:h-16 rounded-full bg-white/30 flex items-center justify-center">
+                    <span className="text-white text-3xl sm:text-4xl md:text-4xl font-bold">
+                      X
+                    </span>
+                  </div>
+                </button>
+              </div>
             </div>
           )}
 
           {(gameState === "won" || gameState === "lost") && (
-            <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-              <div className="text-center space-y-4 md:space-y-6 bg-black/70 p-6 md:p-8 rounded-2xl shadow-2xl mx-4">
+            <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+              <div className="text-center space-y-4 sm:space-y-5 md:space-y-6 bg-black/70 p-5 sm:p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-sm md:max-w-md">
                 <h2
-                  className={`text-4xl md:text-6xl font-bold mb-4 md:mb-8 ${
+                  className={`text-3xl sm:text-4xl md:text-6xl font-bold mb-4 ${
                     gameState === "won" ? "text-green-400" : "text-red-400"
                   }`}
                 >
@@ -725,9 +733,9 @@ const RedLightGreenLight = () => {
                 </h2>
                 <button
                   onClick={startGame}
-                  className="px-6 md:px-8 py-3 md:py-4 bg-white/20 rounded-lg hover:bg-white/30 
-                    transition-all duration-300 text-white text-lg md:text-xl font-bold
-                    hover:scale-105 active:scale-95"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white/20 rounded-lg
+                    hover:bg-white/30 transition-all duration-300 text-white
+                    text-lg sm:text-xl font-bold hover:scale-105 active:scale-95"
                 >
                   Play Again
                 </button>
