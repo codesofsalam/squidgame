@@ -1,29 +1,29 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const StartScreen = ({ onStart, isVisible }) => {
   return (
     <div
       className={`absolute inset-0 z-30 flex items-center justify-center transition-all duration-1000 ${
-        isVisible ? 'translate-y-0' : 'translate-y-full'
+        isVisible ? "translate-y-0" : "translate-y-full"
       } start-screen-bg`}
       style={{
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        height: '100vh',
-        width: '100vw',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        height: "100vh",
+        width: "100vw",
       }}
     >
       <style>
         {`
-          /* Use logomobile.gif for devices with a max-width of 768px */
+          
           @media (max-width: 768px) {
             .start-screen-bg {
               background-image: url('/logomob.gif');
             }
           }
 
-          /* Default to logo.gif for larger devices */
+      
           @media (min-width: 769px) {
             .start-screen-bg {
               background-image: url('/logo.gif');
@@ -32,10 +32,8 @@ const StartScreen = ({ onStart, isVisible }) => {
         `}
       </style>
 
-     
       <div className="absolute inset-0 bg-black/30" />
 
-      
       <div className="relative z-10 text-center space-y-4 md:space-y-8 px-4 md:px-0">
         <img
           src="/start.jpg"
