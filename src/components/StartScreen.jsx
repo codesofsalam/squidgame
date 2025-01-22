@@ -41,7 +41,7 @@ const StartScreen = ({ onStart, isVisible }) => {
           onClick={onStart}
           className="w-64 md:w-96 mt-48 md:mt-72 h-auto mx-auto cursor-pointer transition-transform hover:scale-105 active:scale-95"
         />
-        <p className="text-white text-lg md:text-xl mt-2 md:mt-4">
+        <p className="text-white text-lg md:text-xl mt-2 md:mt-4 text-center tracking-wide shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out">
           Click Above to Start
         </p>
       </div>

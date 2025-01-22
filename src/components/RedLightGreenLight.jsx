@@ -680,11 +680,11 @@ const RedLightGreenLight = () => {
           </div>
 
           {gameState === "playing" && (
-  <div className="fixed bottom-0 left-0 right-0 z-20 p-4 sm:p-6 md:static lg:fixed lg:bottom-0 lg:left-0 lg:right-0">
-    <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8">
-      <button
-        onClick={() => setIsMoving(true)}
-        className={`w-20 h-20 sm:w-24 sm:h-24 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full 
+            <div className="fixed bottom-0 left-0 right-0 z-20 p-4 sm:p-6 md:static lg:fixed lg:bottom-0 lg:left-0 lg:right-0">
+              <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8">
+                <button
+                  onClick={() => setIsMoving(true)}
+                  className={`w-20 h-20 sm:w-24 sm:h-24 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full 
           ${
             isMoving
               ? "bg-blue-500 ring-4 ring-blue-300"
@@ -692,17 +692,17 @@ const RedLightGreenLight = () => {
           } 
           flex items-center justify-center shadow-lg transition-colors
           touch-none`}
-      >
-        <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-white/30 flex items-center justify-center">
-          <span className="text-white text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold">
-            O
-          </span>
-        </div>
-      </button>
+                >
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-white/30 flex items-center justify-center">
+                    <span className="text-white text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold">
+                      O
+                    </span>
+                  </div>
+                </button>
 
-      <button
-        onClick={() => setIsMoving(false)}
-        className={`w-20 h-20 sm:w-24 sm:h-24 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full 
+                <button
+                  onClick={() => setIsMoving(false)}
+                  className={`w-20 h-20 sm:w-24 sm:h-24 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full 
           ${
             !isMoving
               ? "bg-red-500 ring-4 ring-red-300"
@@ -710,17 +710,16 @@ const RedLightGreenLight = () => {
           } 
           flex items-center justify-center shadow-lg transition-colors
           touch-none`}
-      >
-        <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-white/30 flex items-center justify-center">
-          <span className="text-white text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold">
-            X
-          </span>
-        </div>
-      </button>
-    </div>
-  </div>
-)}
-
+                >
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-full bg-white/30 flex items-center justify-center">
+                    <span className="text-white text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold">
+                      X
+                    </span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
 
           {(gameState === "won" || gameState === "lost") && (
             <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
