@@ -716,7 +716,7 @@ const RedLightGreenLight = () => {
               <div className="text-center space-y-6 bg-gradient-to-b from-black/90 to-black/70 p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl w-full max-w-md md:max-w-lg border border-white/10">
                 <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 mx-auto mb-4">
                   <img
-                    src={gameState === "won" ? "/youwon.jpg" : "/gameover.gif"}
+                    src={gameState === "won" ? "/youwon.gif" : "/gameover.gif"}
                     alt={gameState === "won" ? "Victory" : "Game Over"}
                     className="w-full h-full object-cover rounded-2xl"
                   />
