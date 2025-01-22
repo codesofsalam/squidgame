@@ -689,7 +689,11 @@ const RedLightGreenLight = () => {
                     : "bg-blue-500 hover:bg-blue-600"
                 } flex items-center justify-center shadow-lg transition-colors`}
               >
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/30" />
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/30 flex items-center justify-center">
+                  <span className="text-white text-xl md:text-4xl font-bold">
+                    O
+                  </span>
+                </div>
               </button>
 
               <button
@@ -700,7 +704,11 @@ const RedLightGreenLight = () => {
                     : "bg-red-500 hover:bg-red-600"
                 } flex items-center justify-center shadow-lg transition-colors`}
               >
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/30" />
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/30 flex items-center justify-center">
+                  <span className="text-white text-xl md:text-4xl font-bold">
+                    X
+                  </span>
+                </div>
               </button>
             </div>
           )}
