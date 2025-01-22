@@ -31,7 +31,7 @@ const RedLightGreenLight = () => {
   const createPlayerModel = (color, position) => {
     const group = new THREE.Group();
 
-    // Body (torso)
+    
     const torsoGeometry = new THREE.CapsuleGeometry(0.3, 0.8, 8, 16);
     const torsoMaterial = new THREE.MeshPhongMaterial({
       color: 0x2e8b57,
@@ -42,8 +42,7 @@ const RedLightGreenLight = () => {
     torso.castShadow = true;
     group.add(torso);
 
-    // Head
-    // Head
+    
     const headGeometry = new THREE.SphereGeometry(0.25, 32, 32);
     const headMaterial = new THREE.MeshPhongMaterial({
       color: 0xffe0b2,
@@ -54,7 +53,7 @@ const RedLightGreenLight = () => {
     head.castShadow = true;
     group.add(head);
 
-    // Hair
+    
     const hairGeometry = new THREE.SphereGeometry(
       0.26,
       32,
@@ -73,21 +72,21 @@ const RedLightGreenLight = () => {
     hair.castShadow = true;
     group.add(hair);
 
-    // Arms (left and right)
+   
     const createArm = (isLeft) => {
       const armGroup = new THREE.Group();
 
-      // Upper arm
+    
       const upperArmGeometry = new THREE.CapsuleGeometry(0.1, 0.4, 8, 16);
       const upperArm = new THREE.Mesh(upperArmGeometry, torsoMaterial);
       upperArm.position.y = -0.2;
 
-      // Elbow (joint)
+    
       const elbowGeometry = new THREE.SphereGeometry(0.1, 16, 16);
       const elbow = new THREE.Mesh(elbowGeometry, torsoMaterial);
       elbow.position.y = -0.4;
 
-      // Lower arm
+
       const lowerArmGeometry = new THREE.CapsuleGeometry(0.08, 0.4, 8, 16);
       const lowerArm = new THREE.Mesh(lowerArmGeometry, torsoMaterial);
       lowerArm.position.y = -0.6;
@@ -99,21 +98,20 @@ const RedLightGreenLight = () => {
 
     group.add(createArm(true), createArm(false));
 
-    // Legs (left and right)
+  
     const createLeg = (isLeft) => {
       const legGroup = new THREE.Group();
 
-      // Upper leg
+      
       const upperLegGeometry = new THREE.CapsuleGeometry(0.12, 0.5, 8, 16);
       const upperLeg = new THREE.Mesh(upperLegGeometry, torsoMaterial);
       upperLeg.position.y = -0.25;
 
-      // Knee (joint)
       const kneeGeometry = new THREE.SphereGeometry(0.12, 16, 16);
       const knee = new THREE.Mesh(kneeGeometry, torsoMaterial);
       knee.position.y = -0.5;
 
-      // Lower leg
+      
       const lowerLegGeometry = new THREE.CapsuleGeometry(0.1, 0.5, 8, 16);
       const lowerLeg = new THREE.Mesh(lowerLegGeometry, torsoMaterial);
       lowerLeg.position.y = -0.75;
@@ -125,7 +123,7 @@ const RedLightGreenLight = () => {
 
     group.add(createLeg(true), createLeg(false));
 
-    // Player number/symbol
+  
     const symbolGeometry = new THREE.CircleGeometry(0.15, 32);
     const symbolMaterial = new THREE.MeshPhongMaterial({
       color: color,
@@ -136,14 +134,14 @@ const RedLightGreenLight = () => {
     group.add(symbol);
 
     group.position.copy(position);
-    // Increased scale from 1.5 to 2.5
+  
     group.scale.set(2.5, 2.5, 2.5);
     return group;
   };
   const createTree = (position) => {
     const group = new THREE.Group();
 
-    // Tree trunk
+  
     const trunkGeometry = new THREE.CylinderGeometry(0.5, 0.7, 4, 8);
     const trunkMaterial = new THREE.MeshPhongMaterial({
       color: 0x4a2f1b,
@@ -153,7 +151,6 @@ const RedLightGreenLight = () => {
     trunk.castShadow = true;
     group.add(trunk);
 
-    // Tree foliage (multiple layers for fuller look)
     const foliageColors = [0x1b4a1b, 0x245024, 0x2d5c2d];
     const foliageSizes = [3, 2.5, 2];
     const foliageHeights = [3, 4, 5];
@@ -177,7 +174,7 @@ const RedLightGreenLight = () => {
   const createGuard = (position) => {
     const group = new THREE.Group();
 
-    // Pink Jumpsuit
+  
     const bodyGeometry = new THREE.CylinderGeometry(0.4, 0.5, 2, 32);
     const bodyMaterial = new THREE.MeshPhongMaterial({
       color: 0xff69b4,
@@ -187,7 +184,7 @@ const RedLightGreenLight = () => {
     body.castShadow = true;
     group.add(body);
 
-    // Mask
+   
     const maskGeometry = new THREE.BoxGeometry(0.6, 0.6, 0.4);
     const maskMaterial = new THREE.MeshPhongMaterial({
       color: 0x000000,
@@ -198,7 +195,7 @@ const RedLightGreenLight = () => {
     mask.position.z = 0.1;
     group.add(mask);
 
-    // Symbol (circle or square)
+   
     const symbolGeometry = Math.random() > 0.5 
       ? new THREE.CircleGeometry(0.15, 32)
       : new THREE.BoxGeometry(0.25, 0.25, 0.01);
@@ -211,7 +208,7 @@ const RedLightGreenLight = () => {
     symbol.position.z = 0.31;
     group.add(symbol);
 
-    // Gun (simplified)
+
     const gunGeometry = new THREE.BoxGeometry(0.1, 0.3, 1);
     const gunMaterial = new THREE.MeshPhongMaterial({
       color: 0x2c2c2c,
@@ -230,7 +227,7 @@ const RedLightGreenLight = () => {
   const createGiantDoll = () => {
     const group = new THREE.Group();
 
-    // Body with Korean school uniform style
+    
     const bodyGeometry = new THREE.CylinderGeometry(1.2, 1.8, 5, 32);
     const bodyMaterial = new THREE.MeshPhongMaterial({
       color: 0xffa726,
@@ -239,7 +236,6 @@ const RedLightGreenLight = () => {
     const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
     group.add(body);
 
-    // Orange dress
     const dressGeometry = new THREE.CylinderGeometry(2.2, 3.2, 4, 32);
     const dressMaterial = new THREE.MeshPhongMaterial({
       color: 0xff5722,
@@ -249,7 +245,7 @@ const RedLightGreenLight = () => {
     dress.position.y = -0.5;
     group.add(dress);
 
-    // Head
+
     const headGeometry = new THREE.SphereGeometry(1.2, 64, 64);
     const headMaterial = new THREE.MeshPhongMaterial({
       color: 0xffe0b2,
@@ -259,7 +255,7 @@ const RedLightGreenLight = () => {
     head.position.y = 3;
     group.add(head);
 
-    // Pigtails
+ 
     const pigtailGeometry = new THREE.TorusGeometry(0.5, 0.2, 16, 32);
     const pigtailMaterial = new THREE.MeshPhongMaterial({
       color: 0x3e2723,
@@ -271,7 +267,6 @@ const RedLightGreenLight = () => {
     rightPigtail.position.set(1.5, 3.5, 0);
     group.add(leftPigtail, rightPigtail);
 
-    // Eyes with dynamic color
     const eyeGeometry = new THREE.SphereGeometry(0.3, 32, 32);
     const createEyeMaterial = () => new THREE.MeshPhongMaterial({
       color: 0x000000,
@@ -285,7 +280,7 @@ const RedLightGreenLight = () => {
     const rightEye = new THREE.Mesh(eyeGeometry, createEyeMaterial());
     rightEye.position.set(0.5, 3.2, 0.8);
     
-    // Store references to eye meshes
+ 
     dollEyesRef.current = {
       left: leftEye,
       right: rightEye
@@ -298,7 +293,7 @@ const RedLightGreenLight = () => {
     return group;
   };
 
-  // Add effect to update eye color based on light status
+
   useEffect(() => {
     if (dollEyesRef.current.left && dollEyesRef.current.right) {
       const eyeColor = isGreenLight ? 0x000000 : 0xff0000;
@@ -326,13 +321,12 @@ const RedLightGreenLight = () => {
     );
     camera.position.set(0, 25, 50);
 
-      // Adjust camera position based on screen size
       const updateCameraPosition = () => {
         const isMobile = window.innerWidth < 768;
         if (isMobile) {
-          camera.position.set(0, 30, 60); // Increased distance for better mobile view
+          camera.position.set(0, 30, 60); 
         } else {
-          camera.position.set(0, 25, 50); // Original desktop position
+          camera.position.set(0, 25, 50); 
         }
       };
       
@@ -347,7 +341,7 @@ const RedLightGreenLight = () => {
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // Enhanced lighting
+   
     const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
     scene.add(ambientLight);
 
@@ -364,7 +358,7 @@ const RedLightGreenLight = () => {
     mainLight.shadow.camera.bottom = -100;
     scene.add(mainLight);
 
-    // Add mood lighting
+
     const redSpotlight = new THREE.SpotLight(0xff0000, 1);
     redSpotlight.position.set(-20, 10, -30);
     redSpotlight.angle = Math.PI / 6;
@@ -377,7 +371,7 @@ const RedLightGreenLight = () => {
     blueSpotlight.penumbra = 0.3;
     scene.add(blueSpotlight);
 
-    // Enhanced ground with texture
+
     const groundGeometry = new THREE.PlaneGeometry(200, 200, 100, 100);
     const groundMaterial = new THREE.MeshStandardMaterial({
       color: 0xcccccc,
@@ -389,7 +383,7 @@ const RedLightGreenLight = () => {
     ground.receiveShadow = true;
     scene.add(ground);
 
-    // Add terrain variation
+   
     const vertices = ground.geometry.attributes.position.array;
     for (let i = 0; i < vertices.length; i += 3) {
       if (Math.abs(vertices[i]) > 80 || Math.abs(vertices[i + 1]) > 80) {
@@ -399,7 +393,7 @@ const RedLightGreenLight = () => {
     ground.geometry.attributes.position.needsUpdate = true;
     ground.geometry.computeVertexNormals();
 
-    // Add trees
+ 
     const treePositions = [
       [-15, 0, -35],
       [15, 0, -35],
@@ -414,7 +408,6 @@ const RedLightGreenLight = () => {
       scene.add(tree);
     });
 
-    // Add guards
     const guardPositions = [
       [-10, 0, -30],
       [10, 0, -30],
@@ -430,7 +423,7 @@ const RedLightGreenLight = () => {
     scene.add(doll);
     dollRef.current = doll;
 
-    // Create players with enhanced visuals
+ 
     const playerSymbols = [
       0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff,
     ];
@@ -472,7 +465,7 @@ const RedLightGreenLight = () => {
       frameRef.current = requestAnimationFrame(animate);
       controls.update();
 
-      // Animate guards
+      
       guardsRef.current.forEach((guard, index) => {
         guard.rotation.y = Math.sin(Date.now() * 0.001 + index * Math.PI) * 0.2;
       });
@@ -520,11 +513,11 @@ const RedLightGreenLight = () => {
           audioRef.current.play();
         }
   
-        // Use lightTimerRef for tracking green light duration
+       
         lightTimerRef.current = setTimeout(() => {
           setIsGreenLight(false);
           
-          // Use lightTimerRef for tracking red light duration
+        
           lightTimerRef.current = setTimeout(() => {
             if (gameState === "playing") {
               startLightCycle();
@@ -554,7 +547,6 @@ const RedLightGreenLight = () => {
           (char) => !char.eliminated
         ).length;
   
-        // First check if all active players have already reached destination
         const allPlayersAtDestination = charactersRef.current.every(char => 
           char.eliminated || char.reachedDestination
         );
@@ -578,7 +570,7 @@ const RedLightGreenLight = () => {
               char.reachedDestination = true;
               char.isMoving = false;
 
-              // Check for win condition immediately after a player reaches destination
+          
               const allReached = charactersRef.current.every(player => 
                 player.eliminated || player.reachedDestination
               );
@@ -592,7 +584,7 @@ const RedLightGreenLight = () => {
           }
         });
   
-        // Check for eliminations during red light
+
         if (!isGreenLight) {
           const movingPlayers = charactersRef.current.filter(
             (char) =>
@@ -609,7 +601,7 @@ const RedLightGreenLight = () => {
               guard.lookAt(playerToEliminate.mesh.position);
             });
 
-            // Check if all remaining players are eliminated
+         
             if (charactersRef.current.every(char => char.eliminated)) {
               setGameState("lost");
               setIsMoving(false);
@@ -693,14 +685,14 @@ const RedLightGreenLight = () => {
 
       {showGame && (
         <>
-          {/* Responsive timer */}
+    
           <div className="absolute top-4 md:top-8 left-1/2 transform -translate-x-1/2 z-20">
             <div className="bg-black text-red-600 px-4 md:px-6 py-2 md:py-3 rounded-lg text-2xl md:text-4xl font-digital">
               {formatTime(timeRemaining)}
             </div>
           </div>
 
-          {/* Responsive mute button */}
+
           <div className="absolute top-4 right-4 z-20">
             <button
               onClick={toggleMute}
@@ -715,7 +707,7 @@ const RedLightGreenLight = () => {
             </button>
           </div>
 
-          {/* Responsive game controls */}
+        
           {gameState === "playing" && (
             <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-4">
               <button
@@ -742,7 +734,7 @@ const RedLightGreenLight = () => {
             </div>
           )}
 
-          {/* Responsive game over modal */}
+       
           {(gameState === "won" || gameState === "lost") && (
             <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm">
               <div className="text-center space-y-4 md:space-y-6 bg-black/70 p-6 md:p-8 rounded-2xl shadow-2xl mx-4">

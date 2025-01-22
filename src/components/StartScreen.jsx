@@ -32,10 +32,10 @@ const StartScreen = ({ onStart, isVisible }) => {
         `}
       </style>
 
-      {/* Overlay */}
+     
       <div className="absolute inset-0 bg-black/30" />
 
-      {/* Content */}
+      
       <div className="relative z-10 text-center space-y-4 md:space-y-8 px-4 md:px-0">
         <img
           src="/start.jpg"
