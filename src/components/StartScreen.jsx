@@ -5,28 +5,47 @@ const StartScreen = ({ onStart, isVisible }) => {
     <div
       className={`absolute inset-0 z-30 flex items-center justify-center transition-all duration-1000 ${
         isVisible ? 'translate-y-0' : 'translate-y-full'
-      }`}
+      } start-screen-bg`}
       style={{
-        backgroundImage: 'url("/logo.gif")', // Use the GIF file here
-        backgroundSize: 'cover', // Ensures the GIF covers the entire container
-        backgroundPosition: 'center', // Centers the GIF
-        backgroundRepeat: 'no-repeat', // Prevents tiling of the GIF
-        height: '100vh', // Full viewport height
-        width: '100vw', // Full viewport width
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        height: '100vh',
+        width: '100vw',
       }}
     >
+      <style>
+        {`
+          /* Use logomobile.gif for devices with a max-width of 768px */
+          @media (max-width: 768px) {
+            .start-screen-bg {
+              background-image: url('/logomob.gif');
+            }
+          }
+
+          /* Default to logo.gif for larger devices */
+          @media (min-width: 769px) {
+            .start-screen-bg {
+              background-image: url('/logo.gif');
+            }
+          }
+        `}
+      </style>
+
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/30" />
 
       {/* Content */}
-      <div className="relative z-10 text-center space-y-8">
+      <div className="relative z-10 text-center space-y-4 md:space-y-8 px-4 md:px-0">
         <img
           src="/start.jpg"
           alt="Start Game"
           onClick={onStart}
-          className="w-96 mt-72 commit h-auto mx-auto cursor-pointer transition-transform hover:scale-105"
+          className="w-64 md:w-96 mt-48 md:mt-72 h-auto mx-auto cursor-pointer transition-transform hover:scale-105 active:scale-95"
         />
-        <p className="text-white text-xl mt-4">Click Above to Start</p>
+        <p className="text-white text-lg md:text-xl mt-2 md:mt-4">
+          Click Above to Start
+        </p>
       </div>
     </div>
   );
